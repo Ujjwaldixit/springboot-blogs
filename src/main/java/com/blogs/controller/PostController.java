@@ -114,7 +114,7 @@ public class PostController {
         model.addAttribute("tags", tags);
         model.addAttribute("post", post);
 
-        return "/newPost";
+        return "redirect:/newPost";
     }
 
     @PostMapping("/savePost")
@@ -166,7 +166,7 @@ public class PostController {
         if (user != null)
             model.addAttribute("userId", user.getUserId());
 
-        return "fullPost";
+        return "redirect:/fullPost";
     }
 
     @GetMapping("/updatePost/{postId}")
