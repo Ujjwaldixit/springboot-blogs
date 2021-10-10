@@ -73,12 +73,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findPostsByAuthor(List<String> authors) {
-        List<Post> posts=new ArrayList<>();
-        for(String author:authors) {
-            posts.addAll( postRepository.findByAuthor(author));
+    public List<Post> findPostsByAuthorId(List<Integer> authorIds) {
+        List<Post> posts = new ArrayList<>();
+        for (int author : authorIds) {
+            posts.addAll(postRepository.findByAuthorId(author));
         }
-        return  posts;
+        return posts;
     }
 
     @Override

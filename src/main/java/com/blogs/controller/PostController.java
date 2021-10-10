@@ -4,11 +4,14 @@ import com.blogs.model.*;
 import com.blogs.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.ServerException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,54 +21,64 @@ import java.util.List;
 public class PostController {
     @Autowired
     private PostService postService;
+
     @Autowired
     private TagService tagService;
+
     @Autowired
     private PostTagService postTagService;
+
     @Autowired
     private CommentService commentService;
 
     @GetMapping("/")
     public String homePage(@RequestParam(value = "start", defaultValue = "0") int pageNo,
-                           @RequestParam(value = "limit", defaultValue = "10") int pageSize,
+                           @RequestParam(value = "limit", defaultValue = "3") int pageSize,
                            @RequestParam(value = "sortField", defaultValue = "publishedAt") String sortField,
                            @RequestParam(value = "order", defaultValue = "asc") String sortOrder,
                            @RequestParam(value = "search", required = false) String searchKeyword,
-                           @RequestParam(value = "author", required = false) List<String> authors,
-                           @RequestParam(value = "tag", required = false) List<String> tagsName,
+                           @RequestParam(value = "authorId", required = false) List<Integer> authorIds,
+                           @RequestParam(value = "tagId", required = false) List<Integer> tagsIds,
                            @RequestParam(value = "publishedAt", required = false) List<Timestamp> publishedAt,
                            Model model) {
 
-        Page<Post> sortedAndPaginatedPosts = postService.findPostsWithPaginationAndSorting(pageNo, pageSize, sortField, sortOrder);
+        Page<Post> sortedAndPaginatedPosts = postService.findPostsWithPaginationAndSorting(
+                pageNo, pageSize, sortField, sortOrder);
+
         List<Post> posts = sortedAndPaginatedPosts.toList();
 
         if (searchKeyword != null) {
             sortedAndPaginatedPosts = null;
             posts = postService.findPostsByKeyword(searchKeyword);
-            if (posts.size() == 0) {
-                List<Tag> tags = tagService.findTagsByName(Arrays.asList(searchKeyword));
-                if (tags != null) {
-                    List<PostTag> postTags = postTagService.findPostTagsByTags(tags);
-                    posts = postService.findPostsByPostTag(postTags);
-                }
+
+            List<Tag> tags = tagService.findTagsByName(List.of(searchKeyword));
+
+            if (tags != null) {
+                List<PostTag> postTags = postTagService.findPostTagsByTags(tags);
+
+                posts = postService.findPostsByPostTag(postTags);
             }
         }
 
-        if (authors != null || tagsName != null || publishedAt != null) {
+        if (authorIds != null || tagsIds != null || publishedAt != null) {
             sortedAndPaginatedPosts = null;
+
             posts = new ArrayList<>();
-            if (authors != null) {
-                posts.addAll(postService.findPostsByAuthor(authors));
+
+            if (authorIds != null) {
+                posts.addAll(postService.findPostsByAuthorId(authorIds));
             }
+
             if (publishedAt != null) {
                 posts.addAll(postService.findPostsByPublishedAt(publishedAt));
             }
-            if (tagsName != null) {
-                List<Tag> tags = tagService.findTagsByName(tagsName);
+
+            if (tagsIds != null) {
+                List<Tag> tags = tagService.findTagsByIds(tagsIds);
+
                 if (tags != null) {
                     List<PostTag> postTags = postTagService.findPostTagsByTags(tags);
                     posts.addAll(postService.findPostsByPostTag(postTags));
-
                 }
             }
         }
@@ -90,7 +103,10 @@ public class PostController {
     }
 
     @PostMapping("/savePost")
-    public String savePost(@ModelAttribute("post") Post post, @RequestParam("Tags") String tags, PostTag postTag) {
+    public String savePost(@AuthenticationPrincipal UserDetailsImpl user,
+                           @ModelAttribute("post") Post post,
+                           @RequestParam("Tags") String tags, PostTag postTag) {
+
         post = postService.savePost(post);
         int postId = post.getId();
         List<Integer> tagIds = new ArrayList<>();
