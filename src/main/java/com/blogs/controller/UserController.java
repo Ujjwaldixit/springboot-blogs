@@ -29,17 +29,12 @@ public class UserController {
     public String registerUser(@ModelAttribute("user") User user,
                                RedirectAttributes redirectAttributes) {
 
-        System.out.println("user= "+user);
         boolean checkRegistered = userService.register(user);
-        System.out.println("user2");
         if (checkRegistered) {
-            System.out.println("user3");
             redirectAttributes.addFlashAttribute("success", "!!! Registered Successfully !!!");
         } else {
-            System.out.println("user4");
             redirectAttributes.addFlashAttribute("error", "!!! Already Registered !!!");
         }
-        System.out.println("user5");
         return "redirect:/register";
     }
 
