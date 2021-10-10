@@ -224,7 +224,7 @@ public class PostController {
         return "redirect:/fullPost/" + comment.getPostId();
     }
 
-    @GetMapping("/updateComment/{commentId}/{postId}")
+    @GetMapping("/updateComment/{commentId}")
     public String updateComment(@PathVariable("commentId") int commentId, Model model) {
         Comment comment = commentService.findCommentById(commentId);
 
@@ -235,10 +235,10 @@ public class PostController {
 
     @GetMapping("/deleteComment/{commentId}/{postId}")
     public String deleteComment(@PathVariable("commentId") int commentId,
-                                @PathVariable("postId") int postID) {
+                                @PathVariable("postId") int postId) {
 
         commentService.deleteComment(commentId);
 
-        return "redirect:/fullPost/" + postID;
+        return "redirect:/fullPost/" + postId;
     }
 }
