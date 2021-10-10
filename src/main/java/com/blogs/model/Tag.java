@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tag", schema = "blog")
+@Table(name = "tag")
 public class Tag {
 
     @Id

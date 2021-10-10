@@ -13,7 +13,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name = "post")
-public class Post {
+public class
+Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
