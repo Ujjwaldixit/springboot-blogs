@@ -27,6 +27,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post savePost(Post post) {
         post.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
         if (post.getContent().length() >= 100) {
             post.setExcerpt(post.getContent().substring(0, 90));
         } else {
@@ -88,5 +89,15 @@ public class PostServiceImpl implements PostService {
             posts.addAll(postRepository.findByPublishedAt(publishAt));
         }
         return posts;
+    }
+
+    @Override
+    public List<Post> findPostByTime(String time) {
+        return postRepository.findPostByTime(time);
+    }
+
+    @Override
+    public List<Post> findPostByDate(String date) {
+        return postRepository.findPostByDate(date);
     }
 }

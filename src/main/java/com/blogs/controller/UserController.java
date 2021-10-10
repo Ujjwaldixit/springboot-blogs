@@ -21,7 +21,7 @@ public class UserController {
         return "registrationForm";
     }
 
-    @PostMapping("/register")
+    @PostMapping("/saveUser")
     public String registerUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes) {
         boolean checkRegistered = userService.register(user);
         if (checkRegistered) {
@@ -29,7 +29,7 @@ public class UserController {
         } else {
             redirectAttributes.addFlashAttribute("error", "!!! Already Registered !!!");
         }
-        return "redirect:/login";
+        return "redirect:/register";
     }
 
     @GetMapping("/login")

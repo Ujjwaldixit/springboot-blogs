@@ -29,4 +29,8 @@ public interface PostService {
     List<Post> findPostsByAuthorId(List<Integer> authorIds);
 
     List<Post> findPostsByPublishedAt(List<Timestamp> publishedAt);
+
+    List<Post> findPostByTime(String time);
+
+    List<Post> findPostByDate(String date);
 }

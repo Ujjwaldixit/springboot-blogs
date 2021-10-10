@@ -34,7 +34,7 @@ public class PostController {
 
     @GetMapping("/")
     public String homePage(@RequestParam(value = "start", defaultValue = "0") int pageNo,
-                           @RequestParam(value = "limit", defaultValue = "3") int pageSize,
+                           @RequestParam(value = "limit", defaultValue = "10") int pageSize,
                            @RequestParam(value = "sortField", defaultValue = "publishedAt") String sortField,
                            @RequestParam(value = "order", defaultValue = "asc") String sortOrder,
                            @RequestParam(value = "search", required = false) String searchKeyword,
@@ -51,13 +51,15 @@ public class PostController {
         if (searchKeyword != null) {
             sortedAndPaginatedPosts = null;
             posts = postService.findPostsByKeyword(searchKeyword);
+            System.out.println("search =" + posts);
+            if (posts == null) {
+                List<Tag> tags = tagService.findTagsByName(List.of(searchKeyword));
 
-            List<Tag> tags = tagService.findTagsByName(List.of(searchKeyword));
+                if (tags != null) {
+                    List<PostTag> postTags = postTagService.findPostTagsByTags(tags);
 
-            if (tags != null) {
-                List<PostTag> postTags = postTagService.findPostTagsByTags(tags);
-
-                posts = postService.findPostsByPostTag(postTags);
+                    posts = postService.findPostsByPostTag(postTags);
+                }
             }
         }
 
@@ -71,7 +73,7 @@ public class PostController {
             }
 
             if (publishedAt != null) {
-                posts.addAll(postService.findPostsByPublishedAt(publishedAt));
+                posts.addAll();
             }
 
             if (tagsIds != null) {
@@ -91,22 +93,30 @@ public class PostController {
         model.addAttribute("start", pageNo);
         model.addAttribute("limit", pageSize);
         model.addAttribute("keyword", searchKeyword);
+
         return "index";
     }
 
-    @GetMapping("/showNewPostForm")
-    public String newPost(@AuthenticationPrincipal UserDetailsImpl user, Model model, Post post) {
+    @GetMapping("/newPost")
+    public String newPost(@AuthenticationPrincipal UserDetailsImpl user,
+                          Model model,
+                          Post post) {
+
         post.setAuthor(user.getName());
-        model.addAttribute("post", post);
+
         List<Tag> tags = tagService.getAllTags();
+
         model.addAttribute("tags", tags);
+        model.addAttribute("post", post);
+
         return "/newPost";
     }
 
     @PostMapping("/savePost")
     public String savePost(@AuthenticationPrincipal UserDetailsImpl user,
                            @ModelAttribute("post") Post post,
-                           @RequestParam("Tags") String tags, PostTag postTag) {
+                           @RequestParam("Tags") String tags,
+                           PostTag postTag) {
 
         post.setAuthor(user.getName());
         post.setAuthorId(user.getUserId());
@@ -136,7 +146,9 @@ public class PostController {
     }
 
     @GetMapping("/fullPost/{postId}")
-    public String displayFullPost(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("postId") int postId, Model model) {
+    public String displayFullPost(@AuthenticationPrincipal UserDetailsImpl user,
+                                  @PathVariable("postId") int postId,
+                                  Model model) {
 
         Post post = postService.findPostById(postId);
 
@@ -144,9 +156,10 @@ public class PostController {
 
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
+        model.addAttribute("user", user);
 
         if (user != null)
-            model.addAttribute("userName", user.getName());
+            model.addAttribute("userId", user.getUserId());
 
         return "fullPost";
     }
@@ -158,7 +171,7 @@ public class PostController {
 
         Post post = postService.findPostById(id);
 
-        if (user.getUserId()!=post.getAuthorId()||!user.getRole().equals("ADMIN"))
+        if (user.getUserId() != post.getAuthorId() || !user.getRole().equals("ADMIN"))
             throw new UsernameNotFoundException("Not Intended User");
 
         List<Tag> tags = tagService.getAllTags();
@@ -177,9 +190,9 @@ public class PostController {
     public String deletePost(@AuthenticationPrincipal UserDetailsImpl user,
                              @PathVariable("postId") int postId) {
 
-        Post post=postService.findPostById(postId);
+        Post post = postService.findPostById(postId);
 
-        if (user.getUserId()!=post.getAuthorId()||!user.getRole().equals("ADMIN"))
+        if (user.getUserId() != post.getAuthorId() || !user.getRole().equals("ADMIN"))
             throw new UsernameNotFoundException("Not Intended User");
 
         postService.deletePost(postId);

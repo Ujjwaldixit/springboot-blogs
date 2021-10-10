@@ -6,41 +6,39 @@
     <title>Full Post</title>
 </head>
 <body>
-
-<div sec:authorize="isAuthenticated()" th:if="${userName}==${post.author}">
-
+<div align="center">
+    <div sec:authorize="isAuthenticated()" th:if="${(userId==post.authorId)||user.getRole().equals('ADMIN')}">
         <a th:href="@{'/updatePost/'+${post.id}}">Update Post</a>
         <a th:href="@{'/deletePost/'+${post.id}}">Delete Post</a>
-</div>
-
-<p>------------------------------------------------------</p>
-<div>
-    <h1 th:text="${post.title}"></h1>
-    <h2 th:text="${post.author}"></h2>
-    <h4 th:text="${post.createdAt}"></h4>
-    <h3 th:text="${post.content}"></h3>
-
-    <p>------------------------------------------------------</p>
-    <br>
-
-    <a th:href="@{'/addComment/'+${post.id}}">Add Comments</a>
-</div>
-
-<h1>Comments</h1>
-<p>------------------------------------------------------</p>
-<div th:each="comment :${comments}">
-    <h5 th:text="'By-'+${comment.name}"></h5>
-    <h2 th:text="${comment.comment}"></h2>
-    <h5 th:text="'commented at-'+${comment.createdAt}"></h5>
-
-    <div sec:authorize="isAuthenticated()" th:if="${userName}==${post.author}">
-           <a th:href="@{'/updateComment/'+${comment.id}}">Update Comment</a>
-           <a th:href="@{'/deleteComment/'+${comment.id} + '/' + ${comment.postId}}">Delete Comment</a>
     </div>
+
     <p>------------------------------------------------------</p>
+    <div>
+        <h1 th:text="${post.title}"></h1>
+        <h4 th:text="'Author- '+${post.author}"></h4>
+        <h6 th:text="'Updated -'+${post.updatedAt}"></h6>
+        <h3 th:text="${post.content}"></h3>
+
+        <p>------------------------------------------------------</p>
+        <br>
+        <a th:href="@{'/addComment/'+${post.id}}">Add Comments</a>
+
+    </div>
+
+    <h1>Comments</h1>
+    <p>------------------------------------------------------</p>
+    <div th:each="comment :${comments}">
+        <h5 th:text="'By-'+${comment.name}"></h5>
+        <h2 th:text="${comment.comment}"></h2>
+        <h5 th:text="'commented at-'+${comment.createdAt}"></h5>
+
+        <div sec:authorize="isAuthenticated()" th:if="${(userId==post.authorId)||user.getRole().equals('ADMIN')}">
+            <a th:href="@{'/updateComment/'+${comment.id}}">Update Comment</a>
+            <a th:href="@{'/deleteComment/'+${comment.id} + '/' + ${comment.postId}}">Delete Comment</a>
+        </div>
+        <p>------------------------------------------------------</p>
+    </div>
+
 </div>
-
-
-
 </body>
 </html>

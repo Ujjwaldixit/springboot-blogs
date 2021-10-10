@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
+    <title>Home</title>
 </head>
 <body>
-<h1>Index Page</h1>
+<h3><a sec:authorize="${!isAuthenticated()}" th:href="@{/login}">Login</a></h3>
 <div align="center">
-    <H1>posts</H1>
-    <a th:href="@{/showNewPostForm}">Add Post</a>
+    <H1>Posts</H1>
+    <a th:href="@{/newPost}">Add Post</a>
     <a th:href="@{/register}">Register User</a>
     <br>
     <br>
@@ -23,16 +24,17 @@
         </form>
     </span>
     <br>
+
     <p>------------------------------------------------------</p>
+
     <div th:each="post :${posts}">
         <h1 th:text="${post.title}"></h1>
-        <h2 th:text="${post.author}"></h2>
-        <h4 th:text="${post.createdAt}"></h4>
+        <h5 th:text="'Author-'+${post.author}"></h5>
+        <h6 th:text="'created at-'+${post.createdAt}"></h6>
         <h3 th:text="${post.excerpt}+'...'"></h3>
         <a href="#" th:href="@{'/fullPost/'+${post.id}}">Read More</a>
         <p>------------------------------------------------------</p>
     </div>
-
 
     <div th:if="${totalPages > 0|| totalPages!=null}">
         <div class="row col-sm-10">
@@ -40,10 +42,10 @@
                     <span th:each="i: ${#numbers.sequence(0, totalPages-1)}">
                         <a th:text="${i+1}" th:href="@{'/?start=' +${(i*limit)+1}+ '&limit=' +${limit}}"></a>
                     </span>
-
             </div>
         </div>
     </div>
+
 </div>
 </div>
 </body>

@@ -5,32 +5,37 @@
     <title>Registration form</title>
 </head>
 <body>
-<h1> Registration form</h1>
-<form action="" th:action="@{/register}" th:object="${user}" method="POST">
-    <div class="alert alert-success text-center" role="alert" th:text="${success}" th:if="${success}"></div>
-    <div class="alert alert-error text-center" role="alert" th:text="${error}" th:if="${error}"></div>
-    <br>
-    <label th:text="Name">Name</label>
-    <input required type="text" th:field="*{name}" placeholder="Enter name">
-    <br>
-    <br>
-    <label th:text="Email">Email</label>
-    <input required type="email" th:field="*{email}" placeholder="Enter email">
-    <br>
-    <br>
-    <label th:text="Password">Password</label>
-    <input required type="password" th:field="*{password}" placeholder="Enter Password">
-    <br>
-    <br>
-    <label th:text="Role">Role</label>
-    <select th:field="*{role}">
-        <option th:field="*{role}" th:value="'ADMIN'">ADMIN</option>
-        <option th:field="*{role}" th:value="'AUTHOR'">AUTHOR</option>
-    </select>
-    <br>
-    <br>
-    <button type="submit">Submit</button>
-</form>
 
+<div align="center">
+    <h2> Create Account</h2>
+    <form action="" th:action="@{/saveUser}" th:object="${user}" method="POST">
+        <div class="alert alert-success text-center" role="alert" th:text="${success}" th:if="${success}"></div>
+        <div class="alert alert-error text-center" role="alert" th:text="${error}" th:if="${error}"></div>
+        <br>
+        <label th:text="Name">Name</label>
+        <input required type="text" th:field="*{name}" placeholder="Enter name">
+        <br>
+        <br>
+        <label th:text="Email">Email</label>
+        <input required type="email" th:field="*{email}" placeholder="Enter email">
+        <br>
+        <br>
+        <label th:text="Password">Password</label>
+        <input required type="password" th:field="*{password}" placeholder="Enter Password">
+        <br>
+        <br>
+        <label th:text="Role">Role</label>
+        <select th:field="*{role}">
+            <option th:field="*{role}" th:value="'ADMIN'">ADMIN</option>
+            <option th:field="*{role}" th:value="'AUTHOR'">AUTHOR</option>
+        </select>
+        <br>
+        <br>
+        <button type="submit">Submit</button>
+        <br>
+        <br>
+        <h5>Have Account?<a th:href="@{/login}">Login</a></h5>
+    </form>
+</div>
 </body>
 </html>
