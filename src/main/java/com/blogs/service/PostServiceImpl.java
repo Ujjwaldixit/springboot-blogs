@@ -102,5 +102,4 @@ public class PostServiceImpl implements PostService {
     public List<Post> findPostByPublishedDateTime(Timestamp publishedDateTime) {
         return postRepository.findByPublishedAt(publishedDateTime);
     }
-
 }

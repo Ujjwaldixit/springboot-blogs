@@ -31,9 +31,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     List<Post> findByPublishedAt(Timestamp publishedAt);
 
-    @Query(value = "select * from blog.post where to_char(published_at,'HH24:MI')=:time",nativeQuery = true)
+    @Query(value = "select * from post where to_char(published_at,'HH24:MI')=:time",nativeQuery = true)
     List<Post> findPostByTime(@Param("time") String time);
 
-    @Query(value = "select * from blog.post where date(published_at)=:date",nativeQuery = true)
+    @Query(value = "select * from post where date(published_at)=:date",nativeQuery = true)
     List<Post> findPostByDate(@Param("date") LocalDate date);
 }

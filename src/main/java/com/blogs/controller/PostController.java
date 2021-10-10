@@ -71,9 +71,10 @@ public class PostController {
             if (publishedDateTimes != null) {
                 for (String publishedDateTime : publishedDateTimes) {
                     if (publishedDateTime.length() == 10) {
+                        System.out.println("here");
                         posts.addAll(postService.findPostByPublishedDate(publishedDateTime));
                     }
-                    if (publishedDateTime.length() == 5) {
+                    else if (publishedDateTime.length() == 5) {
                         posts.addAll(postService.findPostByPublishedTime(publishedDateTime));
                     } else {
                         posts.addAll(postService.findPostByPublishedDateTime(Timestamp.valueOf(publishedDateTime)));
@@ -106,11 +107,10 @@ public class PostController {
                           Model model,
                           Post post) {
 
-        System.out.println("newpost1");
         post.setAuthor(user.getName());
-        System.out.println("newpost2"+user.getName());
+
         List<Tag> tags = tagService.getAllTags();
-        System.out.println("newpost3"+tags);
+
         model.addAttribute("tags", tags);
         model.addAttribute("post", post);
 
