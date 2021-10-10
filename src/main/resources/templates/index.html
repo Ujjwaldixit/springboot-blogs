@@ -28,6 +28,8 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+
 </style>
 <body>
 <h3><a sec:authorize="${!isAuthenticated()}" th:href="@{/login}">Login</a></h3>
@@ -38,10 +40,12 @@
     <a th:href="@{/register}">Register User</a>
     <br>
     <br>
-    <a th:href="@{'/?sortField=publishedAt&order=asc&start='+${start}+ '&limit='+${limit}}">Sort ASC</a>
-    <a th:href="@{'/?sortField=publishedAt&order=desc&start='+${start}+ '&limit='+${limit}}">Sort DESC</a>
-    <br>
-    <br>
+    <div th:if="${totalPages > 0|| totalPages!=null}">
+        <a th:href="@{'/?sortField=publishedAt&order=asc&start='+${start}+ '&limit='+${limit}}">Sort ASC</a>
+        <a th:href="@{'/?sortField=publishedAt&order=desc&start='+${start}+ '&limit='+${limit}}">Sort DESC</a>
+        <br>
+        <br>
+    </div>
     <span>
         <form th:action="@{/?search=}" method="GET">
             <input type="text" placeholder="Search" name="search">
