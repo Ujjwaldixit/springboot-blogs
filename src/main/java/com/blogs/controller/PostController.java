@@ -202,7 +202,6 @@ public class PostController {
 
         postService.deletePost(postId);
         postTagService.deletePostTags(postTagService.findPostTagsByPostId(postId));
-        commentService.deleteCommentByPostId(postId);
 
         return "redirect:/";
     }
