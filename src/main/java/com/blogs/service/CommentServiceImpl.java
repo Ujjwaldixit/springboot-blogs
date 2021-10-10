@@ -32,4 +32,9 @@ public class CommentServiceImpl implements CommentService {
     public Comment findCommentById(int commentId) {
         return commentRepository.getOne(commentId);
     }
+
+    @Override
+    public void deleteCommentByPostId(int postId) {
+        commentRepository.deleteByPostId(postId);
+    }
 }
