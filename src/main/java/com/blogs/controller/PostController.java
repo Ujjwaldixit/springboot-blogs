@@ -106,10 +106,11 @@ public class PostController {
                           Model model,
                           Post post) {
 
+        System.out.println("newpost1");
         post.setAuthor(user.getName());
-
+        System.out.println("newpost2"+user.getName());
         List<Tag> tags = tagService.getAllTags();
-
+        System.out.println("newpost3"+tags);
         model.addAttribute("tags", tags);
         model.addAttribute("post", post);
 
