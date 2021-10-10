@@ -18,4 +18,6 @@ public interface PostTagService {
     void deletePostTag(PostTag postAndTag);
 
     List<PostTag> findPostTagsByTags(List<Tag> tag);
+
+    void savePostTags(int postId,List<Tag> Tags);
 }

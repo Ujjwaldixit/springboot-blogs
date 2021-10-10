@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +39,14 @@ public class PostTagServiceImpl implements PostTagService {
             postTags.addAll(postTagRepository.findPostTagByTagId(tag.getId()));
         }
         return postTags;
+    }
+
+    @Override
+    public void savePostTags(int postId, List<Tag> Tags) {
+        for (Tag tag : Tags) {
+            postTagRepository.save(new PostTag(postId, tag.getId(),
+                    new Timestamp(System.currentTimeMillis()),
+                    new Timestamp(System.currentTimeMillis())));
+        }
     }
 }
