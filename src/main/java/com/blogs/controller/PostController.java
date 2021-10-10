@@ -7,6 +7,7 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -107,14 +108,20 @@ public class PostController {
                            @ModelAttribute("post") Post post,
                            @RequestParam("Tags") String tags, PostTag postTag) {
 
+        post.setAuthor(user.getName());
+        post.setAuthorId(user.getUserId());
         post = postService.savePost(post);
+
         int postId = post.getId();
+
         List<Integer> tagIds = new ArrayList<>();
+
         if (tags.length() > 0) {
             tagIds = tagService.saveTag(tags);
         }
 
         postTag.setPostId(postId);
+
         if (tagIds.size() > 0) {
             for (int tagId : tagIds) {
                 postTag.setTagId(tagId);
@@ -124,14 +131,18 @@ public class PostController {
             postTag.setTagId(0);
             postTagService.savePostTag(postTag);
         }
+
         return "redirect:/";
     }
 
     @GetMapping("/fullPost/{postId}")
     public String displayFullPost(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable("postId") int postId, Model model) {
+
         Post post = postService.findPostById(postId);
-        model.addAttribute("post", post);
+
         List<Comment> comments = commentService.findCommentsByPostId(postId);
+
+        model.addAttribute("post", post);
         model.addAttribute("comments", comments);
 
         if (user != null)
@@ -141,48 +152,76 @@ public class PostController {
     }
 
     @GetMapping("/updatePost/{postId}")
-    public String updatePost(@PathVariable("postId") int id, Model model) {
+    public String updatePost(@AuthenticationPrincipal UserDetailsImpl user,
+                             @PathVariable("postId") int id,
+                             Model model) {
+
         Post post = postService.findPostById(id);
-        model.addAttribute("post", post);
+
+        if (user.getUserId()!=post.getAuthorId()||!user.getRole().equals("ADMIN"))
+            throw new UsernameNotFoundException("Not Intended User");
 
         List<Tag> tags = tagService.getAllTags();
+
+        List<PostTag> postTags = postTagService.findPostTagsByPostId(id);
+
+        postTagService.deletePostTags(postTags);
+
+        model.addAttribute("post", post);
         model.addAttribute("tags", tags);
+
         return "newPost";
     }
 
     @GetMapping("/deletePost/{postId}")
-    public String deletePost(@PathVariable("postId") int postId) {
+    public String deletePost(@AuthenticationPrincipal UserDetailsImpl user,
+                             @PathVariable("postId") int postId) {
+
+        Post post=postService.findPostById(postId);
+
+        if (user.getUserId()!=post.getAuthorId()||!user.getRole().equals("ADMIN"))
+            throw new UsernameNotFoundException("Not Intended User");
+
         postService.deletePost(postId);
-        List<PostTag> postTags = postTagService.findPostTagsByPostId(postId);
-        for (PostTag postTag : postTags) {
-            postTagService.deletePostTag(postTag);
-        }
+        postTagService.deletePostTags(postTagService.findPostTagsByPostId(postId));
+        commentService.deleteCommentByPostId(postId);
+
         return "redirect:/";
     }
 
     @GetMapping("/addComment/{postId}")
-    public String addComment(@PathVariable("postId") int postId, Model model, Comment comment) {
+    public String addComment(@PathVariable("postId") int postId,
+                             Model model,
+                             Comment comment) {
+
         model.addAttribute("_comment", comment);
         model.addAttribute("postId", postId);
+
         return "commentForm";
     }
 
     @PostMapping("/saveComment")
     public String saveComment(@ModelAttribute("_comment") Comment comment) {
         commentService.saveComment(comment);
+
         return "redirect:/fullPost/" + comment.getPostId();
     }
 
-    @GetMapping("/updateComment/{commentId}")
+    @GetMapping("/updateComment/{commentId}/{postId}")
     public String updateComment(@PathVariable("commentId") int commentId, Model model) {
         Comment comment = commentService.findCommentById(commentId);
+
         model.addAttribute("_comment", comment);
+
         return "commentForm";
     }
 
     @GetMapping("/deleteComment/{commentId}/{postId}")
-    public String deleteComment(@PathVariable("commentId") int commentId, @PathVariable("postId") int postID) {
+    public String deleteComment(@PathVariable("commentId") int commentId,
+                                @PathVariable("postId") int postID) {
+
         commentService.deleteComment(commentId);
+
         return "redirect:/fullPost/" + postID;
     }
 }

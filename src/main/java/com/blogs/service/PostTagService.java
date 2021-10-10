@@ -20,4 +20,6 @@ public interface PostTagService {
     List<PostTag> findPostTagsByTags(List<Tag> tag);
 
     void savePostTags(int postId,List<Tag> Tags);
+
+    void deletePostTags(List<PostTag> postAndTags);
 }

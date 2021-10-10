@@ -49,4 +49,10 @@ public class PostTagServiceImpl implements PostTagService {
                     new Timestamp(System.currentTimeMillis())));
         }
     }
+
+    @Override
+    public void deletePostTags(List<PostTag> postAndTags) {
+        for (PostTag postTag : postAndTags)
+            postTagRepository.delete(postTag);
+    }
 }
