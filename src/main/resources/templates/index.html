@@ -31,8 +31,6 @@
 </style>
 <body>
 <h3><a sec:authorize="${!isAuthenticated()}" th:href="@{/login}">Login</a></h3>
-<br>
-<br>
 <h3><a sec:authorize="${isAuthenticated()}" th:href="@{/logout}">Logout</a></h3>
 <div align="center">
     <H1>Posts</H1>
