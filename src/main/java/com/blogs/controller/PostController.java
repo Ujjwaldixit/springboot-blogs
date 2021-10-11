@@ -75,8 +75,7 @@ public class PostController {
                     }
                     if (publishedDateTime.length() == 5) {
                         posts.addAll(postService.findPostByPublishedTime(publishedDateTime));
-                    }
-                    else{
+                    } else {
                         posts.addAll(postService.findPostByPublishedDateTime(Timestamp.valueOf(publishedDateTime)));
                     }
                 }
