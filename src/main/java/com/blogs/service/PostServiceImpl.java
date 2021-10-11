@@ -5,11 +5,17 @@ import com.blogs.model.PostTag;
 import com.blogs.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -83,21 +89,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findPostsByPublishedAt(List<Timestamp> publishedAt) {
-        List<Post> posts=new ArrayList<>();
-        for(Timestamp publishAt:publishedAt) {
-            posts.addAll(postRepository.findByPublishedAt(publishAt));
-        }
-        return posts;
+    public List<Post> findPostByPublishedTime(String publishedTime) {
+        return postRepository.findPostByTime(publishedTime);
     }
 
     @Override
-    public List<Post> findPostByTime(String time) {
-        return postRepository.findPostByTime(time);
-    }
-
-    @Override
-    public List<Post> findPostByDate(String date) {
-        return postRepository.findPostByDate(date);
+    public List<Post> findPostByPublishedDate(String publishedDate) throws ParseException {
+        return postRepository.findPostByDate(LocalDate.parse(publishedDate));
     }
 }

@@ -1,6 +1,7 @@
 package com.blogs.repository;
 
 import com.blogs.model.Post;
+import org.apache.tomcat.jni.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -9,7 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -30,5 +35,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findPostByTime(@Param("time") String time);
 
     @Query(value = "select * from blog.post where date(published_at)=:date",nativeQuery = true)
-    List<Post> findPostByDate(@Param("date") String date);
+    List<Post> findPostByDate(@Param("date") LocalDate date);
 }

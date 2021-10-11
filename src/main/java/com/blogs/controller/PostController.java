@@ -4,18 +4,13 @@ import com.blogs.model.*;
 import com.blogs.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.rmi.ServerException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -40,8 +35,8 @@ public class PostController {
                            @RequestParam(value = "search", required = false) String searchKeyword,
                            @RequestParam(value = "authorId", required = false) List<Integer> authorIds,
                            @RequestParam(value = "tagId", required = false) List<Integer> tagsIds,
-                           @RequestParam(value = "publishedAt", required = false) List<Timestamp> publishedAt,
-                           Model model) {
+                           @RequestParam(value = "publishedAt", required = false) List<String> publishedDateTimes,
+                           Model model) throws Exception {
 
         Page<Post> sortedAndPaginatedPosts = postService.findPostsWithPaginationAndSorting(
                 pageNo, pageSize, sortField, sortOrder);
@@ -63,17 +58,23 @@ public class PostController {
             }
         }
 
-        if (authorIds != null || tagsIds != null || publishedAt != null) {
+        if (authorIds != null || tagsIds != null || publishedDateTimes != null) {
             sortedAndPaginatedPosts = null;
-
             posts = new ArrayList<>();
 
             if (authorIds != null) {
                 posts.addAll(postService.findPostsByAuthorId(authorIds));
             }
 
-            if (publishedAt != null) {
-                posts.addAll();
+            if (publishedDateTimes != null) {
+                for (String publishedDateTime : publishedDateTimes) {
+                    if (publishedDateTime.length() == 10) {
+                        posts.addAll(postService.findPostByPublishedDate(publishedDateTime));
+                    }
+                    if (publishedDateTime.length() == 5) {
+                        posts.addAll(postService.findPostByPublishedTime(publishedDateTime));
+                    }
+                }
             }
 
             if (tagsIds != null) {
