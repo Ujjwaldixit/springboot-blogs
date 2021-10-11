@@ -1,6 +1,7 @@
 package com.blogs.controller;
 
 import com.blogs.model.*;
+import com.blogs.repository.UserRepository;
 import com.blogs.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -28,6 +29,9 @@ public class PostController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/")
     public String homePage(@RequestParam(value = "start", defaultValue = "0") int pageNo,
@@ -73,8 +77,7 @@ public class PostController {
                     if (publishedDateTime.length() == 10) {
                         System.out.println("here");
                         posts.addAll(postService.findPostByPublishedDate(publishedDateTime));
-                    }
-                    else if (publishedDateTime.length() == 5) {
+                    } else if (publishedDateTime.length() == 5) {
                         posts.addAll(postService.findPostByPublishedTime(publishedDateTime));
                     } else {
                         posts.addAll(postService.findPostByPublishedDateTime(Timestamp.valueOf(publishedDateTime)));
@@ -99,6 +102,8 @@ public class PostController {
         model.addAttribute("start", pageNo);
         model.addAttribute("limit", pageSize);
         model.addAttribute("keyword", searchKeyword);
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("tags", tagService.getAllTags());
         return "index";
     }
 

@@ -53,9 +53,36 @@
         </form>
     </span>
     <br>
+    <br>
+    <h4>FILTER</h4>
+    <div class="col-md-2">
+        <form th:action="@{/}" method="GET" >
+            <div class="col-md-12">
+                <input type="date" name="publishedAt"><br />
+            </div>
 
-    <div class="tooltip" align="center">Filter
-        <span class="tooltiptext">Append the URL like this /abc.com/?authorId="1"&tagId="1"&tagId="2"</span>
+            <div>
+                <h5>By Author: </h5>
+                <th:block th:each="user: ${users}">
+                    <div th:object="${user}">
+                        <input type="checkbox" name="authorId" th:value="${user.userId}" />
+                        <label>[[${user.name}]]</label>
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="overflow-hidden">
+                <h5>By Tags: </h5>
+                <th:block th:each="tag: ${tags}">
+                    <div th:object="${tag}">
+                        <input type="checkbox" name="tagId" th:value="${tag.id}" />
+                        <label>[[${tag.name}]]</label>
+                    </div>
+                </th:block>
+            </div>
+
+            <input type="submit" value="Filter Changes" />
+        </form>
     </div>
     <p>------------------------------------------------------</p>
 
