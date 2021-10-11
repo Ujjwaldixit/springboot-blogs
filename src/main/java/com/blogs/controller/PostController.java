@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -46,7 +48,7 @@ public class PostController {
         if (searchKeyword != null) {
             sortedAndPaginatedPosts = null;
             posts = postService.findPostsByKeyword(searchKeyword);
-            System.out.println("search =" + posts);
+
             if (posts == null) {
                 List<Tag> tags = tagService.findTagsByName(List.of(searchKeyword));
 
@@ -74,6 +76,9 @@ public class PostController {
                     if (publishedDateTime.length() == 5) {
                         posts.addAll(postService.findPostByPublishedTime(publishedDateTime));
                     }
+                    else{
+                        posts.addAll(postService.findPostByPublishedDateTime(Timestamp.valueOf(publishedDateTime)));
+                    }
                 }
             }
 
@@ -94,7 +99,6 @@ public class PostController {
         model.addAttribute("start", pageNo);
         model.addAttribute("limit", pageSize);
         model.addAttribute("keyword", searchKeyword);
-
         return "index";
     }
 

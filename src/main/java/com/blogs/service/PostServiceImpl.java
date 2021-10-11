@@ -97,4 +97,10 @@ public class PostServiceImpl implements PostService {
     public List<Post> findPostByPublishedDate(String publishedDate) throws ParseException {
         return postRepository.findPostByDate(LocalDate.parse(publishedDate));
     }
+
+    @Override
+    public List<Post> findPostByPublishedDateTime(Timestamp publishedDateTime) {
+        return postRepository.findByPublishedAt(publishedDateTime);
+    }
+
 }

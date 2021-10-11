@@ -31,4 +31,6 @@ public interface PostService {
     List<Post> findPostByPublishedTime(String publishedTime) throws Exception;
 
     List<Post> findPostByPublishedDate(String publishedDate) throws Exception;
+
+    List<Post> findPostByPublishedDateTime(Timestamp publishedDateTime);
 }
